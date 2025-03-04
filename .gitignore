@@ -3,7 +3,10 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-!**/src/main/resources/application-local.yml
+
+
+### Custom ###
+application-local.yml
 
 
 ### STS ###
@@ -34,4 +37,3 @@ build/
 
 ### VS Code ###
 .vscode/
-!/src/main/resources/application-local.yml

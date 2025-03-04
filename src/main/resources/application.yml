@@ -2,6 +2,10 @@ server:
   port: 8001
   servlet:
     context-path: /api
+  reactive:
+    session:
+      cookie:
+        max-age: 2592000
 spring:
   application:
     name: fz-picture-backend
@@ -11,6 +15,19 @@ spring:
     url: jdbc:mysql://localhost:3306/fz_picture
     username: root
     password: 123456
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  redis:
+    database: 0
+    port: 6379
+    host: 127.0.0.1
+  session:
+    store-type: redis
+    # 30天之后过期
+    timeout: 2592000
+
 mybatis-plus:
   configuration:
     # Mybatis 配置

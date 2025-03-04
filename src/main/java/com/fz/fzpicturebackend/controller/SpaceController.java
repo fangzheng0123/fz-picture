@@ -215,8 +215,8 @@ public class SpaceController {
                 .map(spaceLevelEnum -> new SpaceLevel(
                         spaceLevelEnum.getValue(),
                         spaceLevelEnum.getText(),
-                        spaceLevelEnum.getMaxSize(),
-                        spaceLevelEnum.getMaxCount()
+                        spaceLevelEnum.getMaxCount(),
+                        spaceLevelEnum.getMaxSize()
                 )).collect(Collectors.toList());
         return ResultUtils.success(spaceLevelList);
     }

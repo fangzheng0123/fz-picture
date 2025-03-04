@@ -40,10 +40,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -142,12 +139,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
             boolean result = this.saveOrUpdate(picture);
             ThrowUtils.throwIf(!result,ErrorCode.OPERATION_ERROR,"操作数据库失败");
 //            更新空间的使用额度
-            boolean update = spaceService.lambdaUpdate()
-                    .eq(Space::getId, finalSpaceId)
-                    .setSql("totalSize + " + picture.getPicSize())
-                    .setSql("totalCount + 1")
-                    .update();
-            ThrowUtils.throwIf(!update,ErrorCode.OPERATION_ERROR,"操作数据库失败");
+            if (Objects.nonNull(finalSpaceId)){
+                boolean update = spaceService.lambdaUpdate()
+                        .eq(Space::getId, finalSpaceId)
+                        .setSql("totalSize = totalSize + " + picture.getPicSize())
+                        .setSql("totalCount = totalCount + 1")
+                        .update();
+                ThrowUtils.throwIf(!update,ErrorCode.OPERATION_ERROR,"额度更新失败");
+            }
             return picture;
         });
         return PictureVO.objToVo(picture);
@@ -195,7 +194,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         queryWrapper.eq(ObjUtil.isNotEmpty(id), "id", id);
         queryWrapper.eq(ObjUtil.isNotEmpty(userId), "userId", userId);
         queryWrapper.eq(ObjUtil.isNotEmpty(spaceId), "spaceId", spaceId);
-        queryWrapper.isNull(nullSpaceId, "nullSpaceId");
+        queryWrapper.isNull(nullSpaceId, "spaceId");
         queryWrapper.like(StrUtil.isNotBlank(name), "name", name);
         queryWrapper.like(StrUtil.isNotBlank(introduction), "introduction", introduction);
         queryWrapper.like(StrUtil.isNotBlank(picFormat), "picFormat", picFormat);
@@ -468,12 +467,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
             boolean result = this.removeById(id);
             ThrowUtils.throwIf(!result,ErrorCode.OPERATION_ERROR,"操作数据库失败");
 //            更新空间的使用额度
-            boolean update = spaceService.lambdaUpdate()
-                    .eq(Space::getId, pictureId)
-                    .setSql("totalSize - " + oldPicture.getPicSize())
-                    .setSql("totalCount - 1")
-                    .update();
-            ThrowUtils.throwIf(!update,ErrorCode.OPERATION_ERROR,"额度失败");
+            if (Objects.nonNull(pictureId)){
+                boolean update = spaceService.lambdaUpdate()
+                        .eq(Space::getId, pictureId)
+                        .setSql("totalSize = totalSize + " + oldPicture.getPicSize())
+                        .setSql("totalCount = totalCount + 1")
+                        .update();
+                ThrowUtils.throwIf(!update,ErrorCode.OPERATION_ERROR,"额度更新失败");
+            }
             return oldPicture;
         });
         // 操作数据库
@@ -490,6 +491,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         // 设置编辑时间
         picture.setEditTime(new Date());
         // 数据校验
+        picture.setIntroduction(pictureEditRequest.getIntroduction());
         this.validPicture(picture);
 //        图片审核参数
         this.fillReviewParams(picture,loginUser);
@@ -499,6 +501,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         ThrowUtils.throwIf(oldPicture == null, ErrorCode.NOT_FOUND_ERROR);
 //        校验权限
         this.checkPictureAuth(oldPicture,loginUser);
+        this.saveOrUpdate(picture);
         return true;
     }
 }

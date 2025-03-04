@@ -2,10 +2,7 @@ package com.fz.fzpicturebackend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fz.fzpicturebackend.model.dto.picture.PictureQueryRequest;
-import com.fz.fzpicturebackend.model.dto.picture.PictureReviewRequest;
-import com.fz.fzpicturebackend.model.dto.picture.PictureUploadByBatchRequest;
-import com.fz.fzpicturebackend.model.dto.picture.PictureUploadRequest;
+import com.fz.fzpicturebackend.model.dto.picture.*;
 import com.fz.fzpicturebackend.model.dto.user.UserQueryRequest;
 import com.fz.fzpicturebackend.model.entity.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -88,4 +85,21 @@ public interface PictureService extends IService<Picture> {
      * 删除cos中的图片信息
      */
     void clearPictureFile(Picture oldPicture);
+
+    /**
+     * 校验图片权限
+     * @param picture
+     * @param loginUser
+     */
+    void checkPictureAuth(Picture picture,User loginUser);
+
+    /**
+     * 删除图片
+     */
+    boolean deletePicture(long id,User loginUser);
+
+    /**
+     * 普通用户修改图片
+     */
+    boolean editPicture(PictureEditRequest pictureEditRequest,User loginUser);
 }

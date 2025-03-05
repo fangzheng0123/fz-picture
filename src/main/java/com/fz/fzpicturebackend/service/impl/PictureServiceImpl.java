@@ -568,12 +568,11 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         List<Long> pictureIdList = pictureEditByBatchRequest.getPictureIdList();
         Long spaceId = pictureEditByBatchRequest.getSpaceId();
         List<String> tags = pictureEditByBatchRequest.getTags();
-        String introduction = pictureEditByBatchRequest.getIntroduction();
         String category = pictureEditByBatchRequest.getCategory();
         if (CollUtil.isEmpty(pictureIdList) || spaceId == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        if (CollUtil.isEmpty(tags) && StringUtils.isBlank(introduction) && StringUtils.isBlank(category)){
+        if (CollUtil.isEmpty(tags) && StringUtils.isBlank(category)){
             return;
         }
 //        校验空间权限
@@ -598,18 +597,42 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
                 if (CollUtil.isNotEmpty(tags)) {
                     picture.setTags(JSONUtil.toJsonStr(tags));
                 }
-                if (StringUtils.isNotBlank(introduction)) {
-                    picture.setIntroduction(introduction);
-                }
                 if (StringUtils.isNotBlank(category)) {
                     picture.setCategory(category);
                 }
             });
+//            更新命名规则
+            String nameRole = pictureEditByBatchRequest.getNameRule();
+            fillPictureWithNameRole(pictureList,nameRole);
 //        批量更新
             boolean result = this.updateBatchById(pictureList);
             ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
             return result;
         });
+    }
+
+    /**
+     *
+     * 格式 ：图片{序号}
+     *
+     * 根据命名规则更新图片名称
+     * @param pictureList
+     * @param nameRule
+     */
+    private void fillPictureWithNameRole(List<Picture> pictureList, String nameRule) {
+        if (StringUtils.isBlank(nameRule) || CollUtil.isEmpty(pictureList)){
+            return;
+        }
+        long count = 1;
+        try {
+            for (Picture picture : pictureList) {
+                String pictureName = nameRule.replaceAll("\\{序号}", String.valueOf(count++));
+                picture.setName(pictureName);
+            }
+        } catch (Exception e) {
+            log.error("批量更新图片名称出错",e);
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"批量更新图片名称出错");
+        }
     }
 }
 

@@ -27,16 +27,12 @@ public class PictureEditByBatchRequest implements Serializable {
      */
     private List<String> tags;
     /**
-     * 图片描述
-     */
-    private String introduction;
-    /**
      * 图片分类
      */
     private String category;
     /**
      * 图片名称
      */
-    private String EditName;
+    private String nameRule;
 
 }

@@ -5,6 +5,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fz.fzpicturebackend.annotation.AuthCheck;
+import com.fz.fzpicturebackend.api.imagesearch.ImageSearchApiFacade;
+import com.fz.fzpicturebackend.api.imagesearch.model.ImageSearchResult;
 import com.fz.fzpicturebackend.common.BaseResponse;
 import com.fz.fzpicturebackend.common.DeleteRequest;
 import com.fz.fzpicturebackend.common.ResultUtils;
@@ -335,5 +337,21 @@ public class PictureController {
         return ResultUtils.success(pictureService.getPictureVOPage(picturePage, request));
     }
 
+
+    /**
+     * 以图搜图
+     * @param searchPictureByPictureRequest
+     * @return
+     */
+    @PostMapping("/search/picture")
+    public BaseResponse<List<ImageSearchResult>> searchPictureByPicture(
+            @RequestBody SearchPictureByPictureRequest searchPictureByPictureRequest){
+        ThrowUtils.throwIf(searchPictureByPictureRequest == null,ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(searchPictureByPictureRequest.getPictureId() == null,ErrorCode.PARAMS_ERROR);
+        Picture picture = pictureService.getById(searchPictureByPictureRequest.getPictureId());
+        ThrowUtils.throwIf(picture == null,ErrorCode.PARAMS_ERROR);
+        List<ImageSearchResult> imageSearchResults = ImageSearchApiFacade.searchImage(picture.getUrl());
+        return ResultUtils.success(imageSearchResults);
+    }
 
 }

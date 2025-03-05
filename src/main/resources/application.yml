@@ -27,6 +27,8 @@ spring:
     store-type: redis
     # 30天之后过期
     timeout: 2592000
+  profiles:
+    active: local
 
 mybatis-plus:
   configuration:

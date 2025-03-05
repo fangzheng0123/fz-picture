@@ -60,12 +60,6 @@ public class GetImageListApi {
         }  
         JSONArray list = data.getJSONArray("list");
         return JSONUtil.toList(list, ImageSearchResult.class);
-    }  
-  
-    public static void main(String[] args) {  
-        String url = "https://graph.baidu.com/ajax/pcsimi?carousel=503&entrance=GENERAL&extUiData%5BisLogoShow%5D=1&inspire=general_pc&limit=30&next=2&render_type=card&session_id=5658111123852553197&sign=121a8e97cd54acd88139901741145038&tk=eec8c&tpl_from=pc";
-        List<ImageSearchResult> imageList = getImageList(url);  
-        System.out.println("搜索成功" + imageList);  
-    }  
+    }
 }
 

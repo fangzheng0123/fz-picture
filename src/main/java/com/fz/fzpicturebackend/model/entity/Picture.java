@@ -55,6 +55,11 @@ public class Picture implements Serializable {
     private Long picSize;
 
     /**
+     * 图片颜色
+     */
+    private String picColor;
+
+    /**
      * 图片宽度
      */
     private Integer picWidth;

@@ -17,7 +17,7 @@ import java.io.IOException;
 @Service
 public class FilePictureUpload extends PictureUploadTemplate{
     /**
-     * 处理输入源并生成1本地文件
+     * 处理输入源并生成本地文件
      * @param inputSource
      * @param file
      */

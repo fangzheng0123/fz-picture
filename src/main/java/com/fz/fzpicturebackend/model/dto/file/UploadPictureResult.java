@@ -34,7 +34,12 @@ public class UploadPictureResult {
     /**  
      * 图片宽度  
      */  
-    private int picWidth;  
+    private int picWidth;
+
+    /**
+     * 图片颜色
+     */
+    private String picColor;
   
     /**  
      * 图片高度  

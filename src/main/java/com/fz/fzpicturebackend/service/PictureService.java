@@ -3,14 +3,13 @@ package com.fz.fzpicturebackend.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fz.fzpicturebackend.model.dto.picture.*;
-import com.fz.fzpicturebackend.model.dto.user.UserQueryRequest;
 import com.fz.fzpicturebackend.model.entity.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fz.fzpicturebackend.model.entity.User;
 import com.fz.fzpicturebackend.model.vo.PictureVO;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
 * @author fang
@@ -102,4 +101,14 @@ public interface PictureService extends IService<Picture> {
      * 普通用户修改图片
      */
     boolean editPicture(PictureEditRequest pictureEditRequest,User loginUser);
+
+    /**
+     * 以颜色搜图方法
+     */
+    List<PictureVO> searchPictureByColor(Long spaceId, String color, User userLogin);
+
+    /**
+     * 批量修改图片信息
+     */
+    void editPictureBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
 }

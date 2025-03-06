@@ -2,6 +2,7 @@ package com.fz.fzpicturebackend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fz.fzpicturebackend.model.dto.picture.CreatePictureOutPaintingTaskRequest;
 import com.fz.fzpicturebackend.model.dto.space.SpaceAddRequest;
 import com.fz.fzpicturebackend.model.dto.space.SpaceQueryRequest;
 import com.fz.fzpicturebackend.model.entity.Space;
@@ -58,5 +59,6 @@ public interface SpaceService extends IService<Space> {
      * @param space
      */
     void fillSpaceBySpaseLevel(Space space);
+
 
 }

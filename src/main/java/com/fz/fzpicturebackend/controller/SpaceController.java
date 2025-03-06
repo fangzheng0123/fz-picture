@@ -111,6 +111,10 @@ public class SpaceController {
         Space oldSpace = spaceService.getById(id);
         ThrowUtils.throwIf(oldSpace == null, ErrorCode.NOT_FOUND_ERROR);
 //        spaceService.clearSpaceFile(oldSpace);
+//        修改空间图片的总大小
+        space.setMaxSize(SpaceLevelEnum.getEnumByValue(space.getSpaceLevel()).getMaxSize());
+//        修改空间图片的总数量
+        space.setMaxCount(SpaceLevelEnum.getEnumByValue(space.getSpaceLevel()).getMaxCount());
         boolean result = spaceService.updateById(space);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);

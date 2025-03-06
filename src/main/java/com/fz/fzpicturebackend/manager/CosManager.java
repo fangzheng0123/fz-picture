@@ -61,13 +61,13 @@ public class CosManager {
 //        图片处理规则
 //        压缩规则
         List<PicOperations.Rule> rules = new ArrayList<>();
-        String webpKey = FileUtil.mainName(key)+".webp";
+        String webpKey = FileUtil.mainName(key)+".jpg";
         PicOperations.Rule compressRule = new PicOperations.Rule();
-        compressRule.setRule("imageMogr2/format/webp");
+        compressRule.setRule("imageMogr2/format/jpg");
         compressRule.setFileId(webpKey);
         compressRule.setBucket(cosClientConfig.getBucket());
         rules.add(compressRule);
-        if (file.length()>2* 1024){
+        if (file.length()> 2 * 1024){
             //        添加缩略图规则
             PicOperations.Rule thumbnailRule = new PicOperations.Rule();
             String thumbnailKey = FileUtil.mainName(key)+"_thumbnail"+FileUtil.getSuffix(key);

@@ -1,5 +1,6 @@
 package com.fz.fzpicturebackend.model.dto.picture;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fz.fzpicturebackend.common.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class PictureQueryRequest extends PageRequest implements Serializable {
   

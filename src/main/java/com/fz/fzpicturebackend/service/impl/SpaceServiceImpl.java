@@ -10,17 +10,18 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fz.fzpicturebackend.exception.BusinessException;
 import com.fz.fzpicturebackend.exception.ErrorCode;
 import com.fz.fzpicturebackend.exception.ThrowUtils;
+import com.fz.fzpicturebackend.model.dto.picture.CreatePictureOutPaintingTaskRequest;
 import com.fz.fzpicturebackend.model.dto.space.SpaceAddRequest;
 import com.fz.fzpicturebackend.model.dto.space.SpaceQueryRequest;
+import com.fz.fzpicturebackend.model.entity.*;
 import com.fz.fzpicturebackend.model.entity.Space;
 import com.fz.fzpicturebackend.model.entity.Space;
-import com.fz.fzpicturebackend.model.entity.Space;
-import com.fz.fzpicturebackend.model.entity.User;
 import com.fz.fzpicturebackend.model.enums.SpaceLevelEnum;
 import com.fz.fzpicturebackend.model.vo.SpaceVO;
 import com.fz.fzpicturebackend.model.vo.SpaceVO;
 import com.fz.fzpicturebackend.model.vo.SpaceVO;
 import com.fz.fzpicturebackend.model.vo.UserVO;
+import com.fz.fzpicturebackend.service.PictureService;
 import com.fz.fzpicturebackend.service.SpaceService;
 import com.fz.fzpicturebackend.mapper.SpaceMapper;
 import com.fz.fzpicturebackend.service.UserService;
@@ -47,6 +48,9 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
 
     @Resource
     private TransactionTemplate transactionTemplate;
+
+    @Resource
+    private PictureService pictureService;
 
     /**
      * 通用查询
@@ -190,7 +194,7 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
 //            代替@Transactional注解，注解在方法上表示完成整个方法
             Long execute = transactionTemplate.execute(status -> {
 //                判断该用户是否有空间
-                boolean exists = this.lambdaQuery().eq(Space::getId, userId).exists();
+                boolean exists = this.lambdaQuery().eq(Space::getUserId, userId).exists();
                 ThrowUtils.throwIf(exists,ErrorCode.PARAMS_ERROR,"每个用户仅能有一个空间");
 //                创建
                 boolean save = this.save(space);
@@ -217,6 +221,8 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
             }
         }
     }
+
+
 }
 
 

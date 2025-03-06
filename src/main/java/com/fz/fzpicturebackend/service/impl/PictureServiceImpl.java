@@ -9,6 +9,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fz.fzpicturebackend.api.aliyunapi.AliYunAPI;
+import com.fz.fzpicturebackend.api.aliyunapi.model.CreateOutPaintingTaskRequest;
+import com.fz.fzpicturebackend.api.aliyunapi.model.CreateOutPaintingTaskResponse;
 import com.fz.fzpicturebackend.exception.BusinessException;
 import com.fz.fzpicturebackend.exception.ErrorCode;
 import com.fz.fzpicturebackend.exception.ThrowUtils;
@@ -67,6 +70,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
     private SpaceService spaceService;
     @Resource
     private CosManager cosManager;
+
+    @Resource
+    private AliYunAPI aliYunAPI;
 
     @Resource
     private TransactionTemplate transactionTemplate;
@@ -453,7 +459,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
 //        如果spaceId为空就表示为公共图库
         if (spaceId == null){
 //            仅管理员和本人能操作
-            if (!picture.getUserId().equals(userId) || !userService.isAdmin(loginUser)){
+            if (!picture.getUserId().equals(userId) && !userService.isAdmin(loginUser)){
                 throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
             }
         }else {
@@ -633,6 +639,35 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
             log.error("批量更新图片名称出错",e);
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"批量更新图片名称出错");
         }
+    }
+
+
+    /**
+     * AI 扩图
+     * @param createPictureOutPaintingTaskRequest
+     * @param loginUser
+     */
+    @Override
+    public CreateOutPaintingTaskResponse createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser) {
+//        校验参数
+        ThrowUtils.throwIf(createPictureOutPaintingTaskRequest == null,ErrorCode.PARAMS_ERROR);
+//        获取图片信息
+        Long pictureId = createPictureOutPaintingTaskRequest.getPictureId();
+        if (pictureId == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"图片id不能为空");
+        }
+        Picture picture = this.getById(pictureId);
+        if (picture == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"图片不存在");
+        }
+        checkPictureAuth(picture,loginUser);
+        CreateOutPaintingTaskRequest createOutPaintingTaskRequest = new CreateOutPaintingTaskRequest();
+        CreateOutPaintingTaskRequest.Input input = new CreateOutPaintingTaskRequest.Input();
+        input.setImageUrl(picture.getUrl());
+        createOutPaintingTaskRequest.setInput(input);
+        createOutPaintingTaskRequest.setParameters(createPictureOutPaintingTaskRequest.getParameters());
+//        创建任务
+        return aliYunAPI.createOutPaintingTask(createOutPaintingTaskRequest);
     }
 }
 

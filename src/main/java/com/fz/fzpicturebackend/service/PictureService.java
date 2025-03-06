@@ -2,6 +2,7 @@ package com.fz.fzpicturebackend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fz.fzpicturebackend.api.aliyunapi.model.CreateOutPaintingTaskResponse;
 import com.fz.fzpicturebackend.model.dto.picture.*;
 import com.fz.fzpicturebackend.model.entity.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -111,4 +112,10 @@ public interface PictureService extends IService<Picture> {
      * 批量修改图片信息
      */
     void editPictureBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
+
+    /**
+     * AI 扩图
+     */
+    CreateOutPaintingTaskResponse createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser);
+
 }

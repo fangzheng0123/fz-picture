@@ -49,9 +49,6 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
     @Resource
     private TransactionTemplate transactionTemplate;
 
-    @Resource
-    private PictureService pictureService;
-
     /**
      * 通用查询
      * @param spaceQueryRequest
@@ -219,6 +216,14 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
             if (space.getMaxCount() == null){
                 space.setMaxCount(maxCount);
             }
+        }
+    }
+
+    @Override
+    public void checkSpaceAuth(Space space, User loginUser) {
+        // 仅本人或管理员可编辑
+        if (!space.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
     }
 

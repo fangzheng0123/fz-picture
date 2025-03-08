@@ -5,7 +5,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fz.fzpicturebackend.annotation.AuthCheck;
-import com.fz.fzpicturebackend.api.aliyunapi.AliYunAPI;
+import com.fz.fzpicturebackend.api.aliyunapi.AliYunAiApi;
+import com.fz.fzpicturebackend.api.aliyunapi.model.CreateOutPaintingTaskRequest;
 import com.fz.fzpicturebackend.api.aliyunapi.model.CreateOutPaintingTaskResponse;
 import com.fz.fzpicturebackend.api.aliyunapi.model.GetOutPaintingTaskResponse;
 import com.fz.fzpicturebackend.api.imagesearch.ImageSearchApiFacade;
@@ -61,7 +62,7 @@ public class PictureController {
     @Resource
     private SpaceService spaceService;
     @Resource
-    private AliYunAPI aliYunAPI;
+    private AliYunAiApi aliYunAiApi;
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -388,28 +389,30 @@ public class PictureController {
         pictureService.editPictureBatch(pictureEditByBatchRequest, loginUser);
         return ResultUtils.success(true);
     }
-
     /**
-     * AI 扩图
+     * 创建 AI 扩图任务
      */
     @PostMapping("/out_painting/create_task")
-    public BaseResponse<CreateOutPaintingTaskResponse> createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest,HttpServletRequest request){
-//        判断数据是否合法
-        ThrowUtils.throwIf(createPictureOutPaintingTaskRequest == null,ErrorCode.PARAMS_ERROR);
-//        获取用户信息
+    public BaseResponse<CreateOutPaintingTaskResponse> createPictureOutPaintingTask(
+            @RequestBody CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest,
+            HttpServletRequest request) {
+        if (createPictureOutPaintingTaskRequest == null || createPictureOutPaintingTaskRequest.getPictureId() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
         User loginUser = userService.getLoginUser(request);
-        CreateOutPaintingTaskResponse createOutPaintingTaskResponse = pictureService.createPictureOutPaintingTask(createPictureOutPaintingTaskRequest, loginUser);
-        return ResultUtils.success(createOutPaintingTaskResponse);
+        CreateOutPaintingTaskResponse response = pictureService.createPictureOutPaintingTask(createPictureOutPaintingTaskRequest, loginUser);
+        return ResultUtils.success(response);
     }
 
     /**
-     * 获取AI扩图结果
+     * 查询 AI 扩图任务
      */
     @GetMapping("/out_painting/get_task")
-    public BaseResponse<GetOutPaintingTaskResponse> getPictureOutPaintingTask(String taskId){
-//        判断数据是否合法
-        ThrowUtils.throwIf(StrUtil.isBlank(taskId),ErrorCode.PARAMS_ERROR);
-        GetOutPaintingTaskResponse getOutPaintingTaskResponse = aliYunAPI.getOutPaintingTask(taskId);
-        return ResultUtils.success(getOutPaintingTaskResponse);
+    public BaseResponse<GetOutPaintingTaskResponse> getPictureOutPaintingTask(String taskId) {
+        ThrowUtils.throwIf(StrUtil.isBlank(taskId), ErrorCode.PARAMS_ERROR);
+        GetOutPaintingTaskResponse task = aliYunAiApi.getOutPaintingTask(taskId);
+        return ResultUtils.success(task);
     }
+
+
 }

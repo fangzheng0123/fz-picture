@@ -39,6 +39,8 @@ public class CreateOutPaintingTaskRequest implements Serializable {
 
     @Data
     public static class Parameters implements Serializable {
+
+        private static final long serialVersionUID = -119728784015134580L;
         /**
          * 可选，逆时针旋转角度，默认值 0，取值范围 [0, 359]
          */
@@ -56,14 +58,14 @@ public class CreateOutPaintingTaskRequest implements Serializable {
          */
         @Alias("x_scale")
         @JsonProperty("xScale")
-        private Float xScale;
+        private Float xScale = 2.0f;
 
         /**
          * 可选，图像居中，在垂直方向上按比例扩展，默认值 1.0，范围 [1.0, 3.0]
          */
         @Alias("y_scale")
         @JsonProperty("yScale")
-        private Float yScale;
+        private Float yScale = 2.0f;
 
         /**
          * 可选，在图像上方添加像素，默认值 0

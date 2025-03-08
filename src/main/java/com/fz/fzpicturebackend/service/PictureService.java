@@ -116,6 +116,13 @@ public interface PictureService extends IService<Picture> {
     /**
      * AI 扩图
      */
+    /**
+     * AI 扩展图片服务
+     *
+     * @param createPictureOutPaintingTaskRequest
+     * @param loginUser 登录的用户
+     * @return
+     */
     CreateOutPaintingTaskResponse createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser);
 
 }

@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fz.fzpicturebackend.api.aliyunapi.AliYunAPI;
+import com.fz.fzpicturebackend.api.aliyunapi.AliYunAiApi;
 import com.fz.fzpicturebackend.api.aliyunapi.model.CreateOutPaintingTaskRequest;
 import com.fz.fzpicturebackend.api.aliyunapi.model.CreateOutPaintingTaskResponse;
 import com.fz.fzpicturebackend.exception.BusinessException;
@@ -72,7 +72,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
     private CosManager cosManager;
 
     @Resource
-    private AliYunAPI aliYunAPI;
+    private AliYunAiApi aliYunAiApi;
 
     @Resource
     private TransactionTemplate transactionTemplate;
@@ -647,28 +647,25 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
      * @param createPictureOutPaintingTaskRequest
      * @param loginUser
      */
+
     @Override
     public CreateOutPaintingTaskResponse createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser) {
-//        校验参数
-        ThrowUtils.throwIf(createPictureOutPaintingTaskRequest == null,ErrorCode.PARAMS_ERROR);
-//        获取图片信息
+        // 获取图片信息
         Long pictureId = createPictureOutPaintingTaskRequest.getPictureId();
-        if (pictureId == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"图片id不能为空");
-        }
-        Picture picture = this.getById(pictureId);
-        if (picture == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"图片不存在");
-        }
-        checkPictureAuth(picture,loginUser);
-        CreateOutPaintingTaskRequest createOutPaintingTaskRequest = new CreateOutPaintingTaskRequest();
+        Picture picture = Optional.ofNullable(this.getById(pictureId))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_ERROR));
+        // 权限校验
+        checkPictureAuth(picture, loginUser);
+        // 构造请求参数
+        CreateOutPaintingTaskRequest taskRequest = new CreateOutPaintingTaskRequest();
         CreateOutPaintingTaskRequest.Input input = new CreateOutPaintingTaskRequest.Input();
         input.setImageUrl(picture.getUrl());
-        createOutPaintingTaskRequest.setInput(input);
-        createOutPaintingTaskRequest.setParameters(createPictureOutPaintingTaskRequest.getParameters());
-//        创建任务
-        return aliYunAPI.createOutPaintingTask(createOutPaintingTaskRequest);
+        taskRequest.setInput(input);
+        BeanUtil.copyProperties(createPictureOutPaintingTaskRequest, taskRequest);
+        // 创建任务
+        return aliYunAiApi.createOutPaintingTask(taskRequest);
     }
+
 }
 
 

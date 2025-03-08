@@ -41,7 +41,7 @@ public class SpaceController {
     private SpaceService spaceService;
 
     /**
-     * 删除空间
+     * 新增空间
      */
     @PostMapping("/add")
     public BaseResponse<Long> addSpace(@RequestBody SpaceAddRequest spaceAddRequest, HttpServletRequest request) {
@@ -55,7 +55,6 @@ public class SpaceController {
         ThrowUtils.throwIf(spaceId < 0, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(spaceId);
     }
-
 
     /**
      * 删除空间

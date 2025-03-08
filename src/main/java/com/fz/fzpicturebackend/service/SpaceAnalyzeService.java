@@ -68,9 +68,4 @@ public interface SpaceAnalyzeService extends IService<Space> {
     List<Space> getSpaceRankAnalyze(SpaceRankAnalyzeRequest spaceRankAnalyzeRequest, User loginUser);
 
 
-
-
-
-
-
 }

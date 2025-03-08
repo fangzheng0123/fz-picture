@@ -17,6 +17,7 @@ import com.fz.fzpicturebackend.model.entity.*;
 import com.fz.fzpicturebackend.model.entity.Space;
 import com.fz.fzpicturebackend.model.entity.Space;
 import com.fz.fzpicturebackend.model.enums.SpaceLevelEnum;
+import com.fz.fzpicturebackend.model.enums.SpaceRoleEnum;
 import com.fz.fzpicturebackend.model.enums.SpaceTypeEnum;
 import com.fz.fzpicturebackend.model.vo.SpaceVO;
 import com.fz.fzpicturebackend.model.vo.SpaceVO;
@@ -25,6 +26,7 @@ import com.fz.fzpicturebackend.model.vo.UserVO;
 import com.fz.fzpicturebackend.service.PictureService;
 import com.fz.fzpicturebackend.service.SpaceService;
 import com.fz.fzpicturebackend.mapper.SpaceMapper;
+import com.fz.fzpicturebackend.service.SpaceUserService;
 import com.fz.fzpicturebackend.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -49,6 +51,9 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
 
     @Resource
     private TransactionTemplate transactionTemplate;
+
+    @Resource
+    private SpaceUserService spaceUserService;
 
     /**
      * 通用查询
@@ -213,6 +218,17 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
 //                创建
                 boolean save = this.save(space);
                 ThrowUtils.throwIf(!save,ErrorCode.PARAMS_ERROR,"创建空间失败");
+
+//                如果用户创建的是一个团队空间，那么在创建团队空间的同时需要将自己的信息存储到数据库中
+                if (SpaceTypeEnum.PRIVATE.getValue() == space.getSpaceType()){
+                    SpaceUser spaceUser = new SpaceUser();
+                    spaceUser.setSpaceId(space.getId());
+                    spaceUser.setUserId(userId);
+                    spaceUser.setSpaceRole(SpaceRoleEnum.ADMIN.getValue());
+//                    将信息存入数据库中
+                    boolean result = spaceUserService.save(spaceUser);
+                    ThrowUtils.throwIf(!result,ErrorCode.PARAMS_ERROR,"创建空间失败");
+                }
                 return space.getId();
             });
             return Optional.ofNullable(execute).orElse(-1L);

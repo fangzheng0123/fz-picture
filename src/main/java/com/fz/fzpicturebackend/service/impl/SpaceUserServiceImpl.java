@@ -129,8 +129,8 @@ public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser
         if (add){
             ThrowUtils.throwIf(spaceId == null,ErrorCode.PARAMS_ERROR,"空间不存在");
             ThrowUtils.throwIf(userId == null,ErrorCode.PARAMS_ERROR,"用户不存在");
-            ThrowUtils.throwIf(userService.getById(userId) != null,ErrorCode.PARAMS_ERROR,"用户不存在");
-            ThrowUtils.throwIf(spaceService.getById(spaceId) != null,ErrorCode.PARAMS_ERROR,"空间不存在");
+            ThrowUtils.throwIf(userService.getById(userId) == null,ErrorCode.PARAMS_ERROR,"用户不存在");
+            ThrowUtils.throwIf(spaceService.getById(spaceId) == null,ErrorCode.PARAMS_ERROR,"空间不存在");
         }
         String spaceRole = spaceUser.getSpaceRole();
         SpaceRoleEnum enumByValue = SpaceRoleEnum.getEnumByValue(spaceRole);

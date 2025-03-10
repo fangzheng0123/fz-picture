@@ -9,8 +9,8 @@ import lombok.Getter;
  */
 @Getter
 public enum SpaceTypeEnum {
-    PUBLIC("私有空间",0),
-    PRIVATE("团队空间",1);
+    PRIVATE("私有空间",0),
+    TEAM("团队空间",1);
 
     private final Integer value;
     private final String text;

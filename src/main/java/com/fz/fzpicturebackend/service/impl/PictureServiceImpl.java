@@ -477,7 +477,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         Picture oldPicture = this.getById(id);
         ThrowUtils.throwIf(oldPicture == null, ErrorCode.NOT_FOUND_ERROR);
 //        检验权限
-        this.checkPictureAuth(oldPicture,loginUser);
+//        更新为鉴权模式
+//        this.checkPictureAuth(oldPicture,loginUser);
         Long pictureId = oldPicture.getSpaceId();
         transactionTemplate.execute(status -> {
             boolean result = this.removeById(id);
@@ -516,7 +517,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         Picture oldPicture = this.getById(id);
         ThrowUtils.throwIf(oldPicture == null, ErrorCode.NOT_FOUND_ERROR);
 //        校验权限
-        this.checkPictureAuth(oldPicture,loginUser);
+//        更新为鉴权模式
+//        this.checkPictureAuth(oldPicture,loginUser);
         this.saveOrUpdate(picture);
         return true;
     }
@@ -584,9 +586,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
 //        校验空间权限
         Space space = spaceService.getById(spaceId);
         ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
-        if (!space.getUserId().equals(loginUser.getId())){
-            ThrowUtils.throwIf(true,ErrorCode.NO_AUTH_ERROR);
-        }
+//        if (!space.getUserId().equals(loginUser.getId())){
+//            ThrowUtils.throwIf(true,ErrorCode.NO_AUTH_ERROR);
+//        }
 //        查询指定图片（仅选择需要的字段）
         List<Picture> pictureList = this.lambdaQuery()
                 .select(Picture::getId,Picture::getSpaceId)
@@ -655,7 +657,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         Picture picture = Optional.ofNullable(this.getById(pictureId))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_ERROR));
         // 权限校验
-        checkPictureAuth(picture, loginUser);
+        //        更新为鉴权模式
+//        checkPictureAuth(picture, loginUser);
         // 构造请求参数
         CreateOutPaintingTaskRequest taskRequest = new CreateOutPaintingTaskRequest();
         CreateOutPaintingTaskRequest.Input input = new CreateOutPaintingTaskRequest.Input();
